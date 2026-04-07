@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Envoyer ma position</title>
+  <meta charset="utf-8">
+</head>
+<body>
+<p>Votre position est envoyée automatiquement toutes les 2 secondes.</p>
+
+<script>
+function sendPosition() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      var lat = pos.coords.latitude;
+      var lng = pos.coords.longitude;
+      fetch("https://ton-site.com/update?lat=" + lat + "&lng=" + lng);
+    });
+  }
+}
+setInterval(sendPosition, 2000);
+</script>
+</body>
+</html>
