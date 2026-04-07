@@ -13,14 +13,19 @@ function sendPosition(position) {
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
       lat: position.coords.latitude,
-      lon: position.coords.longitude
+      lon: position.coords.longitude,
+      accuracy: position.coords.accuracy // précision en mètres
     })
   });
 }
+
+// Utiliser watchPosition pour un suivi continu et plus précis
 if (navigator.geolocation) {
-  setInterval(() => {
-    navigator.geolocation.getCurrentPosition(sendPosition);
-  }, 2000); // toutes les 2s
+  navigator.geolocation.watchPosition(
+    sendPosition,
+    (error) => console.error(error),
+    { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+  );
 } else {
   alert("GPS non supporté");
 }
