@@ -14,11 +14,13 @@ def home():
 # Route pour recevoir les positions GPS
 @app.route('/update', methods=['POST'])
 def update():
-    data = request.data.decode('utf-8')
-    lat, lon = data.split(",")
+    data = request.get_json(force=True)  # récupère le JSON envoyé
+    lat = data.get("lat")
+    lon = data.get("lng")
+
     devices.append({
-        "lat": float(lat),
-        "lon": float(lon)
+        "lat": lat,
+        "lon": lon,
     })
     return "OK"
 
