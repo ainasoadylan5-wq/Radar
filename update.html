@@ -1,23 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Envoyer ma position</title>
-  <meta charset="utf-8">
+  <title>Ma position en temps réel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Import Leaflet (librairie de cartes) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    #map { height: 100vh; width: 100%; }
+  </style>
 </head>
 <body>
-<p>Votre position est envoyée automatiquement toutes les 2 secondes.</p>
+  <h3>Suivi de ma position</h3>
+  <div id="map"></div>
 
-<script>
-function sendPosition() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(pos) {
-      var lat = pos.coords.latitude;
-      var lng = pos.coords.longitude;
-      fetch("https://ton-site.com/update?lat=" + lat + "&lng=" + lng);
-    });
-  }
-}
-setInterval(sendPosition, 2000);
-</script>
+  <script>
+    // Initialiser la carte centrée sur Madagascar
+    var map = L.map('map').setView([-18.8792, 47.5079], 13);
+
+    // Ajouter les tuiles OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Créer un marqueur pour la position
+    var marker = L.marker([0,0]).addTo(map);
+
+    // Fonction pour mettre à jour la position
+    function updatePosition(position) {
+      var lat = position.coords.latitude;
+      var lon = position.coords.longitude;
+      marker.setLatLng([lat, lon]);
+      map.setView([lat, lon], 15);
+    }
+
+    // Suivi en temps réel
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(updatePosition,
+        function(error){ alert("Erreur GPS: " + error.message); },
+        { enableHighAccuracy: true }
+      );
+    } else {
+      alert("La géolocalisation n'est pas supportée sur ce navigateur.");
+    }
+  </script>
 </body>
 </html>
